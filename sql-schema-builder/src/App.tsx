@@ -62,6 +62,36 @@ function App() {
 
   const sqlGenerator = new SQLGenerator(sqlDialect);
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('sql-schema-builder');
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        setNodes(data.nodes || []);
+        setEdges(data.edges || []);
+        setRelationships(data.relationships || []);
+        setSqlDialect(data.sqlDialect || 'ACCESS');
+        setSchemaMode(data.schemaMode || 'LOGICAL');
+      } catch (e) {
+        console.error('Failed to load saved data:', e);
+      }
+    }
+  }, [setNodes, setEdges]);
+
+  // Save to localStorage on changes
+  useEffect(() => {
+    const data = {
+      nodes,
+      edges,
+      relationships,
+      sqlDialect,
+      isDarkMode,
+      schemaMode
+    };
+    localStorage.setItem('sql-schema-builder', JSON.stringify(data));
+  }, [nodes, edges, relationships, sqlDialect, isDarkMode, schemaMode]);
+
   // Apply dark mode
   useEffect(() => {
     document.body.classList.toggle('theme-dark', isDarkMode);
