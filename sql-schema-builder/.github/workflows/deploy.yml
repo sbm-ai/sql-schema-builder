@@ -21,8 +21,13 @@ jobs:
       - name: Build
         run: npm run build
         
+      - name: Add noop _redirects for SPA
+        run: echo "/*    /index.html   200" > dist/_redirects
+        
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          # Disable CDN for better compatibility
+          disable_nojekyll: true
